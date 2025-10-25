@@ -53,7 +53,8 @@ jobs:
 
       - name: Test
         run: |
-          migrator -direction=up ; \
+          cmd/migrator \
+            -direction=up && \
           gophermarttest \
             -test.v -test.run=^TestGophermart$ \
             -gophermart-binary-path=cmd/gophermart/gophermart \
