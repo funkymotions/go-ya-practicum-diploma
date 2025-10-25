@@ -112,6 +112,7 @@ func (s *userHandlerTestSuite) TestRegisterHandler() {
 			rr := httptest.NewRecorder()
 			s.handler.Register(rr, req)
 			s.Assert().Equal(tc.wantStatus, rr.Code)
+			req.Body.Close()
 		})
 	}
 }

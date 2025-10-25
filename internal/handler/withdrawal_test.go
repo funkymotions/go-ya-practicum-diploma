@@ -78,6 +78,7 @@ func (s *WithdrawalHandlerTestSuite) TestGetWithdrawals() {
 			w := httptest.NewRecorder()
 			s.handler.GetUserWithdrawals(w, req)
 			s.Assert().Equal(tc.wantStatus, w.Result().StatusCode)
+			req.Body.Close()
 		})
 	}
 }

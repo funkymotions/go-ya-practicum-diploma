@@ -152,6 +152,7 @@ func (s *orderHandlerTestSuite) TestOrderRegistration() {
 			w := httptest.NewRecorder()
 			s.handler.RegisterOrder(w, req)
 			s.Assert().Equal(tc.wantStatusCode, w.Result().StatusCode)
+			req.Body.Close()
 		})
 	}
 }
