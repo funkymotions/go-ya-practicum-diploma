@@ -3,10 +3,12 @@ package utils
 import (
 	"context"
 	"strconv"
+
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
 )
 
 func RetrieveContextUserID(ctx context.Context) (uint, bool) {
-	userIDVal := ctx.Value("userID")
+	userIDVal := ctx.Value(middleware.UserIDValue("userID"))
 	if userIDVal == nil {
 		return 0, false
 	}

@@ -10,6 +10,7 @@ import (
 
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/handler/mocks"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )
@@ -82,7 +83,7 @@ func (s *accountHandlerTestSuite) TestAccountBalance() {
 				tc.mockBehavior(&tc.request)
 			}
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, "userID", tc.request.userID)
+			ctx = context.WithValue(ctx, middleware.UserIDValue("userID"), tc.request.userID)
 			req := httptest.NewRequestWithContext(ctx, http.MethodGet, "/api/user/balance", nil)
 			w := httptest.NewRecorder()
 			s.handler.GetAccountBalance(w, req)
@@ -188,7 +189,7 @@ func (s *accountHandlerTestSuite) TestAccountWithdrawal() {
 				tc.mockBehavior(&tc.request)
 			}
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, "userID", tc.request.userID)
+			ctx = context.WithValue(ctx, middleware.UserIDValue("userID"), tc.request.userID)
 			req := httptest.NewRequestWithContext(ctx, http.MethodPost, "/api/user/balance/withdraw", strings.NewReader(tc.request.body))
 			req.Header.Set("Content-Type", tc.request.contentType)
 			w := httptest.NewRecorder()

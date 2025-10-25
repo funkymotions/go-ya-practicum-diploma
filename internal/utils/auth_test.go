@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -38,7 +39,7 @@ func (s *AuthTestSuite) TestUserContextRetrieval() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, "userID", tc.userID)
+			ctx = context.WithValue(ctx, middleware.UserIDValue("userID"), tc.userID)
 			userID, ok := RetrieveContextUserID(ctx)
 			if tc.wantError {
 				s.Assert().False(ok, "Expected error but got valid user ID")

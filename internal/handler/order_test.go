@@ -14,6 +14,7 @@ import (
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/dto"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/handler/mocks"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
@@ -145,7 +146,7 @@ func (s *orderHandlerTestSuite) TestOrderRegistration() {
 				tc.mockBehavior(tc.serviceArg, &tc.requestArgs)
 			}
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, "userID", fmt.Sprintf("%d", tc.requestArgs.userID))
+			ctx = context.WithValue(ctx, middleware.UserIDValue("userID"), fmt.Sprintf("%d", tc.requestArgs.userID))
 			req := httptest.NewRequestWithContext(ctx, http.MethodPost, "/api/user/orders", tc.requestArgs.body)
 			req.Header.Set("Content-Type", tc.requestArgs.requestContentType)
 			w := httptest.NewRecorder()
@@ -233,7 +234,7 @@ func (s *orderHandlerTestSuite) TestGetUserOrders() {
 				tc.mockBehavior(&tc.requestArgs)
 			}
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, "userID", fmt.Sprintf("%d", tc.requestArgs.userID))
+			ctx = context.WithValue(ctx, middleware.UserIDValue("userID"), fmt.Sprintf("%d", tc.requestArgs.userID))
 			req := httptest.NewRequestWithContext(ctx, http.MethodGet, "/api/user/orders", nil)
 			w := httptest.NewRecorder()
 			s.handler.GetUserOrders(w, req)

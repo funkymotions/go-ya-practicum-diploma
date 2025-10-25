@@ -9,6 +9,7 @@ import (
 
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/handler/mocks"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
@@ -72,7 +73,7 @@ func (s *WithdrawalHandlerTestSuite) TestGetWithdrawals() {
 				tc.mockBehavior()
 			}
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, "userID", tc.userID)
+			ctx = context.WithValue(ctx, middleware.UserIDValue("userID"), tc.userID)
 			req := httptest.NewRequestWithContext(ctx, http.MethodGet, "/api/user/withdrawals", nil)
 			w := httptest.NewRecorder()
 			s.handler.GetUserWithdrawals(w, req)
