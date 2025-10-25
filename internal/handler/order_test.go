@@ -240,6 +240,7 @@ func (s *orderHandlerTestSuite) TestGetUserOrders() {
 			w := httptest.NewRecorder()
 			s.handler.GetUserOrders(w, req)
 			s.Assert().Equal(tc.wantStatusCode, w.Result().StatusCode)
+			req.Body.Close()
 		})
 	}
 }

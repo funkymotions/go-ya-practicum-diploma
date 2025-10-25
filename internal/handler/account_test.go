@@ -196,6 +196,7 @@ func (s *accountHandlerTestSuite) TestAccountWithdrawal() {
 			w := httptest.NewRecorder()
 			s.handler.WithdrawAccount(w, req)
 			s.Assert().Equal(tc.expectedStatusCode, w.Result().StatusCode)
+			req.Body.Close()
 		})
 	}
 }

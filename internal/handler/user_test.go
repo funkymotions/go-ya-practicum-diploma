@@ -194,6 +194,7 @@ func (s *userHandlerTestSuite) TestLoginHandler() {
 			rr := httptest.NewRecorder()
 			s.handler.Login(rr, req)
 			s.Assert().Equal(tc.wantStatus, rr.Code)
+			req.Body.Close()
 		})
 	}
 }
