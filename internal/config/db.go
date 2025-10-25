@@ -9,18 +9,18 @@ import (
 
 type DBConfig struct {
 	Type        string `env:"DB_TYPE"`
-	DSN         string `env:"DB_DSN"`
+	DSN         string `env:"DATABASE_URI"`
 	ConnTimeout int64  `env:"DB_CONN_TIMEOUT"`
 }
 
 func NewDBConfig() (*DBConfig, error) {
-	var flagName = "dsn"
+	var flagName = "d"
 	var DSN string
 	flag.StringVar(&DSN, flagName, "", "Database connection string")
 	flag.Parse()
 	dbConfig := DBConfig{
 		Type:        "postgres",
-		ConnTimeout: 5,
+		ConnTimeout: 1,
 	}
 	if err := env.Parse(&dbConfig); err != nil {
 		return nil, err

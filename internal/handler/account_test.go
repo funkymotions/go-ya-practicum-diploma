@@ -87,8 +87,9 @@ func (s *accountHandlerTestSuite) TestAccountBalance() {
 			req := httptest.NewRequestWithContext(ctx, http.MethodGet, "/api/user/balance", nil)
 			w := httptest.NewRecorder()
 			s.handler.GetAccountBalance(w, req)
-			s.Assert().Equal(tc.expectedStatusCode, w.Result().StatusCode)
-			req.Body.Close()
+			resp := w.Result()
+			s.Assert().Equal(tc.expectedStatusCode, resp.StatusCode)
+			resp.Body.Close()
 		})
 	}
 }

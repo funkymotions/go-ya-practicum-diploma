@@ -111,8 +111,9 @@ func (s *userHandlerTestSuite) TestRegisterHandler() {
 			req.Header.Set("Content-Type", tc.contentType)
 			rr := httptest.NewRecorder()
 			s.handler.Register(rr, req)
-			s.Assert().Equal(tc.wantStatus, rr.Code)
-			req.Body.Close()
+			resp := rr.Result()
+			s.Assert().Equal(tc.wantStatus, resp.StatusCode)
+			resp.Body.Close()
 		})
 	}
 }
@@ -193,8 +194,9 @@ func (s *userHandlerTestSuite) TestLoginHandler() {
 			req.Header.Set("Content-Type", tc.contentType)
 			rr := httptest.NewRecorder()
 			s.handler.Login(rr, req)
-			s.Assert().Equal(tc.wantStatus, rr.Code)
-			req.Body.Close()
+			resp := rr.Result()
+			s.Assert().Equal(tc.wantStatus, resp.StatusCode)
+			resp.Body.Close()
 		})
 	}
 }

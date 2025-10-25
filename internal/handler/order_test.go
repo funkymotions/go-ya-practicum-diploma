@@ -151,8 +151,9 @@ func (s *orderHandlerTestSuite) TestOrderRegistration() {
 			req.Header.Set("Content-Type", tc.requestArgs.requestContentType)
 			w := httptest.NewRecorder()
 			s.handler.RegisterOrder(w, req)
-			s.Assert().Equal(tc.wantStatusCode, w.Result().StatusCode)
-			req.Body.Close()
+			resp := w.Result()
+			s.Assert().Equal(tc.wantStatusCode, resp.StatusCode)
+			resp.Body.Close()
 		})
 	}
 }
@@ -239,8 +240,9 @@ func (s *orderHandlerTestSuite) TestGetUserOrders() {
 			req := httptest.NewRequestWithContext(ctx, http.MethodGet, "/api/user/orders", nil)
 			w := httptest.NewRecorder()
 			s.handler.GetUserOrders(w, req)
-			s.Assert().Equal(tc.wantStatusCode, w.Result().StatusCode)
-			req.Body.Close()
+			resp := w.Result()
+			s.Assert().Equal(tc.wantStatusCode, resp.StatusCode)
+			resp.Body.Close()
 		})
 	}
 }
