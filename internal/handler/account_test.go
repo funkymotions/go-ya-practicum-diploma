@@ -196,8 +196,9 @@ func (s *accountHandlerTestSuite) TestAccountWithdrawal() {
 			req.Header.Set("Content-Type", tc.request.contentType)
 			w := httptest.NewRecorder()
 			s.handler.WithdrawAccount(w, req)
-			s.Assert().Equal(tc.expectedStatusCode, w.Result().StatusCode)
-			req.Body.Close()
+			resp := w.Result()
+			s.Assert().Equal(tc.expectedStatusCode, resp.StatusCode)
+			resp.Body.Close()
 		})
 	}
 }
