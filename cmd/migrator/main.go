@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/config"
@@ -17,7 +16,6 @@ func main() {
 	flag.StringVar(&direction, "direction", "up", "Migration direction (up/down)")
 	flag.Parse()
 	conf, err := config.NewDBConfig()
-	fmt.Printf("DB Config : %+v\n", conf)
 	if err != nil {
 		log.Fatalf("failed to load DB config: %v", err)
 	}

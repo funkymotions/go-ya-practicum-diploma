@@ -48,10 +48,12 @@ jobs:
       - name: Prepare binaries
         run: |
           (cd cmd/gophermart && go build -buildvcs=false -o gophermart)
+          (cd cmd/migrator && go build -buildvcs=false -o migrator)
           (cd cmd/accrual && chmod +x accrual_linux_amd64)
 
       - name: Test
         run: |
+          migrator -direction=up ; \
           gophermarttest \
             -test.v -test.run=^TestGophermart$ \
             -gophermart-binary-path=cmd/gophermart/gophermart \

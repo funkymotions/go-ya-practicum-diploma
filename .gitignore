@@ -4,7 +4,6 @@
 *.dll
 *.so
 *.dylib
-gophermarttest-darwin-arm64
 
 # Test binary, built with `go test -c`
 *.test
@@ -15,6 +14,8 @@ gophermarttest-darwin-arm64
 # Binaries
 cmd/gophermart/main
 cmd/gophermart/gophermart
+cmd/migrator/migrator
+gophermarttest-darwin-arm64
 
 # Dependency directories (remove the comment below to include it)
 vendor/

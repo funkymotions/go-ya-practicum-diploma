@@ -56,7 +56,6 @@ func (h *accountHandler) GetAccountBalance(w http.ResponseWriter, r *http.Reques
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func (h *accountHandler) WithdrawAccount(w http.ResponseWriter, r *http.Request) {

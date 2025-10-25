@@ -56,7 +56,6 @@ func (h *userHandler) Login(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(appErr.Message))
 			return
 		}
-		fmt.Printf("unexpected error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -94,7 +93,6 @@ func (h *userHandler) Register(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(appErr.Message))
 			return
 		}
-		fmt.Printf("unexpected error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

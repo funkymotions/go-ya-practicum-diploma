@@ -1,6 +1,5 @@
 -- table users
 -- table orders
--- table accounts
 -- table withdrawals
 
 CREATE TABLE IF NOT EXISTS users (
