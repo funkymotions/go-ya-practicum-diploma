@@ -13,6 +13,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container: golang:1.24
+    env:
+      DATABASE_URI: "postgresql://postgres:postgres@postgres/praktikum?sslmode=disable"
 
     services:
       postgres:
@@ -51,11 +53,17 @@ jobs:
           (cd cmd/migrator && go build -buildvcs=false -o migrator)
           (cd cmd/accrual && chmod +x accrual_linux_amd64)
 
+      - name: Echo database URI
+        run: |
+          echo "Database URI: $DATABASE_URI"
+
+      - name: Run migrations
+        run: |
+          cmd/migrator/migrator \
+            -direction=up
+
       - name: Test
         run: |
-          export DATABASE_URI='postgresql://postgres:postgres@postgres/praktikum?sslmode=disable' \
-          cmd/migrator/migrator \
-            -direction=up \
           gophermarttest \
             -test.v -test.run=^TestGophermart$ \
             -gophermart-binary-path=cmd/gophermart/gophermart \
