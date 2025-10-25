@@ -20,9 +20,9 @@ type accountHandlerTestSuite struct {
 	handler *accountHandler
 }
 
-func (suite *accountHandlerTestSuite) SetupTest() {
-	suite.service = mocks.NewMockaccountService(gomock.NewController(suite.T()))
-	suite.handler = NewAccountHandler(suite.service)
+func (s *accountHandlerTestSuite) SetupTest() {
+	s.service = mocks.NewMockaccountService(gomock.NewController(s.T()))
+	s.handler = NewAccountHandler(s.service)
 }
 
 func TestAccountHandlerTestSuite(t *testing.T) {

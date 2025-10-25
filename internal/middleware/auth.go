@@ -48,7 +48,7 @@ func (m *AuthMiddleware) IsUserAuthenticated(next http.Handler) http.Handler {
 			return
 		}
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "userID", userID)
+		ctx = context.WithValue(ctx, UserIDValue("userID"), userID)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})
