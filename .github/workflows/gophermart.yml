@@ -53,8 +53,9 @@ jobs:
 
       - name: Test
         run: |
+          export DATABASE_URI='postgresql://postgres:postgres@postgres/praktikum?sslmode=disable' \
           cmd/migrator/migrator \
-            -direction=up && \
+            -direction=up \
           gophermarttest \
             -test.v -test.run=^TestGophermart$ \
             -gophermart-binary-path=cmd/gophermart/gophermart \
