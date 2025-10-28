@@ -12,13 +12,13 @@ import (
 
 type withdrawalServiceTestSuite struct {
 	suite.Suite
-	reposiotory *mocks.MockwithdrawalRepository
-	service     *withdrawalService
+	repository *mocks.MockWithdrawalRepository
+	service    *withdrawalService
 }
 
 func (s *withdrawalServiceTestSuite) SetupTest() {
-	s.reposiotory = mocks.NewMockwithdrawalRepository(gomock.NewController(s.T()))
-	s.service = NewWithdrawalService(s.reposiotory)
+	s.repository = mocks.NewMockWithdrawalRepository(gomock.NewController(s.T()))
+	s.service = NewWithdrawalService(s.repository)
 }
 
 func TestWithdrawalServiceTestSuite(t *testing.T) {
@@ -45,7 +45,7 @@ func (s *withdrawalServiceTestSuite) TestGetUserWithdrawals() {
 						Amount:  100.0,
 					},
 				}
-				s.reposiotory.EXPECT().
+				s.repository.EXPECT().
 					GetUserWithdrawals(gomock.Any()).
 					Return(serviceReturn, nil)
 			},
@@ -56,7 +56,7 @@ func (s *withdrawalServiceTestSuite) TestGetUserWithdrawals() {
 			userID: 1,
 			mockBehavior: func() {
 				serviceReturn := &[]model.Withdrawal{}
-				s.reposiotory.EXPECT().
+				s.repository.EXPECT().
 					GetUserWithdrawals(gomock.Any()).
 					Return(serviceReturn, nil)
 			},
@@ -66,7 +66,7 @@ func (s *withdrawalServiceTestSuite) TestGetUserWithdrawals() {
 			name:   "service unexpected error",
 			userID: 1,
 			mockBehavior: func() {
-				s.reposiotory.EXPECT().
+				s.repository.EXPECT().
 					GetUserWithdrawals(gomock.Any()).
 					Return(nil, errors.New("some error"))
 			},

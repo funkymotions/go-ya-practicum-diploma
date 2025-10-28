@@ -15,12 +15,12 @@ import (
 
 type userServiceTestSuite struct {
 	suite.Suite
-	repository *mocks.MockuserRepository
+	repository *mocks.MockUserRepository
 	service    *userService
 }
 
 func (s *userServiceTestSuite) SetupTest() {
-	s.repository = mocks.NewMockuserRepository(
+	s.repository = mocks.NewMockUserRepository(
 		gomock.NewController(s.T()),
 	)
 	s.service = NewUserService(s.repository)

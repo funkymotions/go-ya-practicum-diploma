@@ -8,21 +8,16 @@ import (
 
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/dto"
-	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/interfaces"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
-type userService interface {
-	Register(*dto.RegisterUserRequest) (*model.User, error)
-	Login(*dto.LoginUserRequest) (*model.User, error)
-}
-
 type userHandler struct {
-	userService userService
+	userService interfaces.UserService
 }
 
-func NewUserHandler(us userService) *userHandler {
+func NewUserHandler(us interfaces.UserService) *userHandler {
 	return &userHandler{
 		userService: us,
 	}

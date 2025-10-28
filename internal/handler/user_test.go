@@ -17,13 +17,13 @@ import (
 
 type userHandlerTestSuite struct {
 	suite.Suite
-	service *mocks.MockuserService
+	service *mocks.MockUserService
 	server  *httptest.Server
 	handler *userHandler
 }
 
 func (s *userHandlerTestSuite) SetupTest() {
-	s.service = mocks.NewMockuserService(
+	s.service = mocks.NewMockUserService(
 		gomock.NewController(
 			s.T(),
 		),

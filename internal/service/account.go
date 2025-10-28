@@ -1,17 +1,20 @@
 package service
 
 import (
+	"math"
+
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/dto"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/interfaces"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/utils"
 )
 
 type accountService struct {
-	orderRepo      orderRepository
-	withdrawalRepo withdrawalRepository
+	orderRepo      interfaces.OrderRepository
+	withdrawalRepo interfaces.WithdrawalRepository
 }
 
-func NewAccountService(o orderRepository, w withdrawalRepository) *accountService {
+func NewAccountService(o interfaces.OrderRepository, w interfaces.WithdrawalRepository) *accountService {
 	return &accountService{
 		orderRepo:      o,
 		withdrawalRepo: w,
@@ -27,7 +30,9 @@ func (s *accountService) CalculateAccountBalance(userID uint) (float64, float64,
 	if err != nil {
 		return 0, 0, err
 	}
-	return balance - withdrawn, withdrawn, nil
+	roundWithdrawn := math.Round(withdrawn*1000) / 1000
+	roundBalance := math.Round((balance-roundWithdrawn)*1000) / 1000
+	return roundBalance, roundWithdrawn, nil
 }
 
 func (s *accountService) WithdrawFromAccount(userID uint, data *dto.AccountBalanceWithdrawRequest) error {

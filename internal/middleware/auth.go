@@ -6,20 +6,16 @@ import (
 	"strconv"
 
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
-	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/interfaces"
 )
 
 type UserIDValue string
 
-type userRepository interface {
-	FindOneByID(id uint) (*model.User, error)
-}
-
 type AuthMiddleware struct {
-	userRepository userRepository
+	userRepository interfaces.UserRepository
 }
 
-func NewAuthUserMiddleware(r userRepository) *AuthMiddleware {
+func NewAuthUserMiddleware(r interfaces.UserRepository) *AuthMiddleware {
 	return &AuthMiddleware{
 		userRepository: r,
 	}

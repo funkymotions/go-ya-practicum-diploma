@@ -18,11 +18,11 @@ import (
 type WithdrawalHandlerTestSuite struct {
 	suite.Suite
 	handler *withdrawalHandler
-	service *mocks.MockwithdrawalService
+	service *mocks.MockWithdrawalService
 }
 
 func (s *WithdrawalHandlerTestSuite) SetupTest() {
-	s.service = mocks.NewMockwithdrawalService(gomock.NewController(s.T()))
+	s.service = mocks.NewMockWithdrawalService(gomock.NewController(s.T()))
 	s.handler = NewWithdrawalHandler(s.service)
 }
 

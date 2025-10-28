@@ -17,12 +17,12 @@ import (
 
 type accountHandlerTestSuite struct {
 	suite.Suite
-	service *mocks.MockaccountService
+	service *mocks.MockAccountService
 	handler *accountHandler
 }
 
 func (s *accountHandlerTestSuite) SetupTest() {
-	s.service = mocks.NewMockaccountService(gomock.NewController(s.T()))
+	s.service = mocks.NewMockAccountService(gomock.NewController(s.T()))
 	s.handler = NewAccountHandler(s.service)
 }
 

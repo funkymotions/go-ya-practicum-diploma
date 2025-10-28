@@ -2,20 +2,15 @@ package service
 
 import (
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/interfaces"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
 )
 
-type withdrawalRepository interface {
-	CreateWithdrawal(userID uint, orderID string, amount float64) error
-	GetUserWithdrawalBalance(userID uint) (float64, error)
-	GetUserWithdrawals(userID uint) (*[]model.Withdrawal, error)
-}
-
 type withdrawalService struct {
-	repo withdrawalRepository
+	repo interfaces.WithdrawalRepository
 }
 
-func NewWithdrawalService(r withdrawalRepository) *withdrawalService {
+func NewWithdrawalService(r interfaces.WithdrawalRepository) *withdrawalService {
 	return &withdrawalService{
 		repo: r,
 	}

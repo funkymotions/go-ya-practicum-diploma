@@ -8,22 +8,17 @@ import (
 
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/dto"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/interfaces"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
-	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
-type orderService interface {
-	RegisterOrder(*dto.RegisterOrderRequest) error
-	GetUserOrders(userID uint) (*[]model.Order, error)
-}
-
 type orderHandler struct {
-	orderService orderService
+	orderService interfaces.OrderService
 }
 
-func NewOrderHandler(os orderService) *orderHandler {
+func NewOrderHandler(os interfaces.OrderService) *orderHandler {
 	return &orderHandler{
 		orderService: os,
 	}

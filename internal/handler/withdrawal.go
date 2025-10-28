@@ -8,21 +8,17 @@ import (
 
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/dto"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/interfaces"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
-	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
-type withdrawalService interface {
-	GetUserWithdrawals(userID uint) (*[]model.Withdrawal, error)
-}
-
 type withdrawalHandler struct {
-	withdrawalService withdrawalService
+	withdrawalService interfaces.WithdrawalService
 }
 
-func NewWithdrawalHandler(ws withdrawalService) *withdrawalHandler {
+func NewWithdrawalHandler(ws interfaces.WithdrawalService) *withdrawalHandler {
 	return &withdrawalHandler{
 		withdrawalService: ws,
 	}

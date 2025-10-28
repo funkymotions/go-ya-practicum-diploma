@@ -13,13 +13,13 @@ import (
 type accountServiceTestSuite struct {
 	suite.Suite
 	service        *accountService
-	orderRepo      *mocks.MockorderRepository
-	withdrawalRepo *mocks.MockwithdrawalRepository
+	orderRepo      *mocks.MockOrderRepository
+	withdrawalRepo *mocks.MockWithdrawalRepository
 }
 
 func (s *accountServiceTestSuite) SetupTest() {
-	s.orderRepo = mocks.NewMockorderRepository(gomock.NewController(s.T()))
-	s.withdrawalRepo = mocks.NewMockwithdrawalRepository(gomock.NewController(s.T()))
+	s.orderRepo = mocks.NewMockOrderRepository(gomock.NewController(s.T()))
+	s.withdrawalRepo = mocks.NewMockWithdrawalRepository(gomock.NewController(s.T()))
 	s.service = NewAccountService(s.orderRepo, s.withdrawalRepo)
 }
 

@@ -23,11 +23,11 @@ import (
 type orderHandlerTestSuite struct {
 	suite.Suite
 	handler *orderHandler
-	service *mocks.MockorderService
+	service *mocks.MockOrderService
 }
 
 func (s *orderHandlerTestSuite) SetupTest() {
-	s.service = mocks.NewMockorderService(gomock.NewController(s.T()))
+	s.service = mocks.NewMockOrderService(gomock.NewController(s.T()))
 	s.handler = NewOrderHandler(s.service)
 }
 

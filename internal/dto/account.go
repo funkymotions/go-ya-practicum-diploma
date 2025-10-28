@@ -1,7 +1,7 @@
 package dto
 
 type AccountBalanceResponse struct {
-	Balance   float64 `json:"balance"`
+	Current   float64 `json:"current"`
 	Withdrawn float64 `json:"withdrawn"`
 }
 

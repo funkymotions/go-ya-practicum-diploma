@@ -15,11 +15,11 @@ func main() {
 	var direction string
 	flag.StringVar(&direction, "direction", "up", "Migration direction (up/down)")
 	flag.Parse()
-	conf, err := config.NewDBConfig()
+	conf, err := config.NewConfig()
 	if err != nil {
 		log.Fatalf("failed to load DB config: %v", err)
 	}
-	appDriver, err := appdriver.NewSQLDriver(conf)
+	appDriver, err := appdriver.NewSQLDriver(conf.DBConfig)
 	if err != nil {
 		log.Fatalf("failed to create PostgreSQL driver: %v", err)
 	}
@@ -27,7 +27,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create PostgreSQL driver: %v", err)
 	}
-	migrator, err := migrate.NewWithDatabaseInstance("file://migrations", conf.Type, driver)
+	migrator, err := migrate.NewWithDatabaseInstance("file://migrations", conf.DBConfig.Type, driver)
 	if err != nil {
 		log.Fatalf("failed to create new migrator: %v", err)
 	}

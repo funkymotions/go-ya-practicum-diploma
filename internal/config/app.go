@@ -1,16 +1,24 @@
 package config
 
-import "errors"
+import (
+	"errors"
+	"flag"
+)
 
 type AppConfig struct {
 	AppAddress           string `env:"RUN_ADDRESS"`
-	AccuralSystemAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	AccrualSystemAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+}
+
+func init() {
+	flag.String("a", "", "Application run address")
+	flag.String("r", "", "Accrual system address")
 }
 
 func NewAppConfig() (*AppConfig, error) {
 	appConf := &AppConfig{
 		AppAddress:           ":8080",
-		AccuralSystemAddress: "http://localhost:8081",
+		AccrualSystemAddress: "http://localhost:8081",
 	}
 	value, exists := LookupVar("RUN_ADDRESS", "a")
 	if !exists {
@@ -21,7 +29,6 @@ func NewAppConfig() (*AppConfig, error) {
 	if !exists {
 		return nil, errors.New("no accrual system address provided")
 	}
-	appConf.AccuralSystemAddress = value
-
+	appConf.AccrualSystemAddress = value
 	return appConf, nil
 }

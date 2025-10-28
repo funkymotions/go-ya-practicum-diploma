@@ -13,14 +13,15 @@ type DBConfig struct {
 	ConnTimeout int64  `env:"DB_CONN_TIMEOUT"`
 }
 
+func init() {
+	flag.String("d", "", "Database connection string")
+}
+
 func NewDBConfig() (*DBConfig, error) {
 	var flagName = "d"
-	var DSN string
-	flag.StringVar(&DSN, flagName, "", "Database connection string")
-	flag.Parse()
 	dbConfig := DBConfig{
 		Type:        "postgres",
-		ConnTimeout: 1,
+		ConnTimeout: 3,
 	}
 	if err := env.Parse(&dbConfig); err != nil {
 		return nil, err

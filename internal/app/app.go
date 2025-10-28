@@ -1,18 +1,22 @@
 package app
 
 import (
-	"log"
 	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/config"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/handler"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/infrastructure/drivers/postgres"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/infrastructure/drivers/rest"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/model"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/repository"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/service"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/utils"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/worker"
 	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 )
 
 type App struct {
@@ -22,30 +26,53 @@ type App struct {
 	doneCh     chan struct{}
 	ordersChan chan *model.Order
 	worker     *worker.Worker
+	poller     *worker.Poller
+	logger     *zap.SugaredLogger
 }
 
 func NewApp() *App {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
 	return &App{
 		server: &http.Server{},
 		engine: chi.NewRouter(),
 		stopCh: make(chan struct{}),
 		doneCh: make(chan struct{}, 5),
+		logger: logger.Sugar(),
 	}
 }
 
 func (a *App) Init() error {
-	appConf, err := config.NewAppConfig()
+	config, err := config.NewConfig()
 	if err != nil {
 		return err
 	}
-	dbConfig, err := config.NewDBConfig()
+	driver, err := postgres.NewSQLDriver(config.DBConfig)
 	if err != nil {
 		return err
 	}
-	driver, err := postgres.NewSQLDriver(dbConfig)
+
+	// this data chan will be used to send orders to worker pool
+	const numOfWorkers = 5
+	a.ordersChan = make(chan *model.Order, numOfWorkers)
+	// HTTP client for accrual system
+	accrualHTTPClient := &http.Client{
+		Timeout: time.Second * 5,
+	}
+
+	accrualBaseURL, err := url.Parse(config.AppConfig.AccrualSystemAddress)
 	if err != nil {
 		return err
 	}
+	accrualRestClient := rest.NewRESTClient(
+		&rest.RESTClientConfig{
+			HTTPClient: accrualHTTPClient,
+			BaseURL:    accrualBaseURL,
+		},
+	)
+
+	// 10 concurrect requests
+	s := utils.NewSemaphore(10)
 
 	// repositories
 	userRepo := repository.NewUserRepository(driver.DB)
@@ -55,7 +82,15 @@ func (a *App) Init() error {
 	// services
 	userService := service.NewUserService(userRepo)
 	accountService := service.NewAccountService(orderRepo, withdrawalRepo)
-	orderService := service.NewOrderService(orderRepo)
+	orderService := service.NewOrderService(
+		&service.OrderServiceConf{
+			OrderRepo:      orderRepo,
+			AccrualClient:  accrualRestClient,
+			OrderQueue:     a.ordersChan,
+			RequestLimiter: s,
+			Logger:         a.logger,
+		},
+	)
 	withdrawalService := service.NewWithdrawalService(withdrawalRepo)
 
 	// middlewares
@@ -67,7 +102,7 @@ func (a *App) Init() error {
 	orderHandler := handler.NewOrderHandler(orderService)
 	withdrawalHandler := handler.NewWithdrawalHandler(withdrawalService)
 	a.server = &http.Server{
-		Addr:    appConf.AppAddress,
+		Addr:    config.AppConfig.AppAddress,
 		Handler: a.engine,
 	}
 
@@ -77,28 +112,40 @@ func (a *App) Init() error {
 	orderHandler.RegisterRoutes(a.engine, authMiddleware)
 	withdrawalHandler.RegisterRoutes(a.engine, authMiddleware)
 
-	// this data chan will be used to send orders to worker pool
-	const numOfWorkers = 10
-	a.ordersChan = make(chan *model.Order, numOfWorkers)
-
-	// worker
 	// number of workers is hardcoded for simplicity, can be moved to config if needed of course
-	a.worker = worker.NewWorker(numOfWorkers, a.stopCh, a.doneCh, a.ordersChan)
+	wConf := &worker.WorkerConfig{
+		BufferSize:   5,
+		StopCh:       a.stopCh,
+		DoneCh:       a.doneCh,
+		Queue:        a.ordersChan,
+		OrderService: orderService,
+		Logger:       a.logger,
+	}
+	a.worker = worker.NewWorker(wConf)
+
+	// pollers
+	a.poller = worker.NewPoller(
+		a.stopCh,
+		a.doneCh,
+		orderService,
+		a.logger,
+	)
 
 	return nil
 }
 
 func (a *App) Start() error {
 	a.worker.Start()
-	log.Printf("starting application on %s...", a.server.Addr)
+	a.poller.Start()
+	a.logger.Infof("starting application on %s...", a.server.Addr)
 	return a.server.ListenAndServe()
 }
 
 func (a *App) Shutdown() {
 	close(a.stopCh)
-	log.Printf("shutting down application...")
+	a.logger.Infof("waiting for workers and pollers to stop...")
 	for i := 0; i < 5; i++ {
 		<-a.doneCh
 	}
-	log.Printf("application stopped")
+	a.logger.Infof("all workers and pollers stopped")
 }

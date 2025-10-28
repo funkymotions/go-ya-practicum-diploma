@@ -8,21 +8,17 @@ import (
 
 	apperrors "github.com/funkymotions/go-ya-practicum-diploma/internal/apperror"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/dto"
+	"github.com/funkymotions/go-ya-practicum-diploma/internal/interfaces"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/middleware"
 	"github.com/funkymotions/go-ya-practicum-diploma/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
-type accountService interface {
-	CalculateAccountBalance(userID uint) (float64, float64, error)
-	WithdrawFromAccount(userID uint, data *dto.AccountBalanceWithdrawRequest) error
-}
-
 type accountHandler struct {
-	accountService accountService
+	accountService interfaces.AccountService
 }
 
-func NewAccountHandler(as accountService) *accountHandler {
+func NewAccountHandler(as interfaces.AccountService) *accountHandler {
 	return &accountHandler{
 		accountService: as,
 	}
@@ -50,7 +46,7 @@ func (h *accountHandler) GetAccountBalance(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	var responseData dto.AccountBalanceResponse
-	responseData.Balance = balance
+	responseData.Current = balance
 	responseData.Withdrawn = withdrawn
 	if err := json.NewEncoder(w).Encode(responseData); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
